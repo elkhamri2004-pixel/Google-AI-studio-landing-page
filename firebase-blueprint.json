@@ -1,0 +1,75 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "A client or admin user in the system.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "client"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Project": {
+      "title": "Project",
+      "description": "A project assigned to a client.",
+      "type": "object",
+      "properties": {
+        "clientId": { "type": "string", "description": "UID of the client" },
+        "title": { "type": "string" },
+        "status": { "type": "string", "enum": ["planning", "design", "development", "testing", "completed"] },
+        "progress": { "type": "number", "description": "Percentage 0-100" },
+        "description": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["clientId", "title", "status", "progress"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "A message in a project discussion.",
+      "type": "object",
+      "properties": {
+        "projectId": { "type": "string" },
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "content": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["projectId", "senderId", "content", "createdAt"]
+    },
+    "Asset": {
+      "title": "Asset",
+      "description": "A file or link for a project.",
+      "type": "object",
+      "properties": {
+        "projectId": { "type": "string" },
+        "name": { "type": "string" },
+        "url": { "type": "string", "format": "uri" },
+        "type": { "type": "string", "enum": ["image", "document", "link", "archive"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["projectId", "name", "url", "type", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/projects/{projectId}": {
+      "schema": "Project",
+      "description": "Client projects"
+    },
+    "/projects/{projectId}/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Project discussion messages"
+    },
+    "/projects/{projectId}/assets/{assetId}": {
+      "schema": "Asset",
+      "description": "Project deliverables and assets"
+    }
+  }
+}
