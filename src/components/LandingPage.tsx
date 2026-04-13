@@ -34,6 +34,7 @@ import {
   LEGAL_LINKS 
 } from '../constants';
 import { handleScroll, handleWhatsAppRedirect } from '../lib/utils';
+import { trackLead, trackInitiateCheckout } from '../lib/pixel';
 import { Hero as AnimatedHero } from './ui/animated-hero';
 import { AuroraBackground } from './ui/aurora-background';
 import { ContainerScroll } from './ui/container-scroll-animation';
@@ -590,12 +591,17 @@ export const Pricing = () => {
                 ))}
               </ul>
 
-              <a 
-                href="#contact" 
-                onClick={(e) => { e.preventDefault(); handleScroll('contact'); }}
+              <a
+                href="#contact"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const value = parseFloat(pkg.price.replace(/[£,]/g, ''));
+                  trackInitiateCheckout(pkg.name, value);
+                  handleScroll('contact');
+                }}
                 className={`block w-full text-center py-4 rounded-2xl font-bold transition-all ${
-                  pkg.isPopular 
-                    ? 'bg-white text-brand-primary hover:bg-brand-light' 
+                  pkg.isPopular
+                    ? 'bg-white text-brand-primary hover:bg-brand-light'
                     : 'bg-brand-primary text-white hover:bg-brand-accent'
                 }`}
               >
@@ -661,12 +667,13 @@ export const Contact = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.name || !formData.email || !formData.whatsapp) {
       console.log("Validation failed: Missing required fields");
       return;
     }
 
+    trackLead();
     setStatus('success');
     console.log("Form submitted successfully:", formData);
     
